@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>WalkTrack - Mockup</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="app-title">
+        <span class="app-logo">WT</span>
+        <div>
+          <h1>WalkTrack</h1>
+          <p>Camina, pedalea, gana recompensas</p>
+        </div>
+      </div>
+      <button class="primary-btn header-btn">Iniciar actividad</button>
+    </header>
+
+    <main class="app-main">
+      <!-- HOME -->
+      <section class="screen screen-active" data-screen="home" aria-label="Inicio">
+        <h2 class="screen-title">Hoy</h2>
+
+        <div class="card stats-main">
+          <div class="stats-circle">
+            <span class="stats-number">6,245</span>
+            <span class="stats-label">pasos</span>
+          </div>
+          <div class="stats-extra">
+            <div>
+              <span class="extra-label">Distancia</span>
+              <span class="extra-value">4.8 km</span>
+            </div>
+            <div>
+              <span class="extra-label">Calorías</span>
+              <span class="extra-value">320 kcal</span>
+            </div>
+            <div>
+              <span class="extra-label">Tiempo activo</span>
+              <span class="extra-value">45 min</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card horizontal-card">
+          <div>
+            <h3>Meta diaria</h3>
+            <p>10,000 pasos · Te faltan 3,755</p>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 62%;"></div>
+            </div>
+          </div>
+          <button class="ghost-btn small">Editar</button>
+        </div>
+
+        <div class="card quick-actions">
+          <h3>Acciones rápidas</h3>
+          <div class="quick-grid">
+            <button class="chip-btn">Caminar</button>
+            <button class="chip-btn">Bicicleta</button>
+            <button class="chip-btn">Ruta rápida</button>
+            <button class="chip-btn">Ver logros</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ACTIVITY -->
+      <section class="screen" data-screen="activity" aria-label="Actividad">
+        <h2 class="screen-title">Actividad</h2>
+
+        <div class="card">
+          <h3>Resumen semanal</h3>
+          <div class="week-grid">
+            <div class="day">
+              <span>L</span>
+              <div class="bar" style="height: 55%;"></div>
+            </div>
+            <div class="day">
+              <span>M</span>
+              <div class="bar" style="height: 80%;"></div>
+            </div>
+            <div class="day">
+              <span>Mi</span>
+              <div class="bar" style="height: 40%;"></div>
+            </div>
+            <div class="day">
+              <span>J</span>
+              <div class="bar" style="height: 90%;"></div>
+            </div>
+            <div class="day">
+              <span>V</span>
+              <div class="bar" style="height: 70%;"></div>
+            </div>
+            <div class="day">
+              <span>S</span>
+              <div class="bar" style="height: 60%;"></div>
+            </div>
+            <div class="day">
+              <span>D</span>
+              <div class="bar" style="height: 30%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card activity-list">
+          <h3>Últimas actividades</h3>
+          <div class="activity-item">
+            <div>
+              <strong>Caminata matutina</strong>
+              <p>3.2 km · 28 min</p>
+            </div>
+            <span class="tag tag-walk">Caminar</span>
+          </div>
+          <div class="activity-item">
+            <div>
+              <strong>Trayecto al trabajo</strong>
+              <p>5.1 km · 22 min</p>
+            </div>
+            <span class="tag tag-bike">Bici</span>
+          </div>
+          <div class="activity-item">
+            <div>
+              <strong>Vuelta al parque</strong>
+              <p>1.4 km · 15 min</p>
+            </div>
+            <span class="tag tag-walk">Caminar</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ROUTES -->
+      <section class="screen" data-screen="routes" aria-label="Rutas">
+        <h2 class="screen-title">Rutas</h2>
+
+        <div class="card">
+          <h3>Filtros</h3>
+          <div class="quick-grid">
+            <button class="chip-btn chip-active">Cerca de mí</button>
+            <button class="chip-btn">Caminar</button>
+            <button class="chip-btn">Bicicleta</button>
+            <button class="chip-btn">Seguras</button>
+          </div>
+        </div>
+
+        <div class="route-list">
+          <article class="card route-card">
+            <div class="route-header">
+              <h3>Ruta parque central</h3>
+              <span class="tag tag-safe">4.7 ★</span>
+            </div>
+            <p>3.5 km · Ideal para caminata suave.</p>
+            <p class="route-meta">Zona arbolada · Iluminada · Pet friendly</p>
+            <button class="secondary-btn full">Ver en mapa</button>
+          </article>
+
+          <article class="card route-card">
+            <div class="route-header">
+              <h3>Circuito río en bici</h3>
+              <span class="tag tag-bike">Bici</span>
+            </div>
+            <p>7.8 km · Trayecto plano con ciclovía.</p>
+            <p class="route-meta">Puntos de descanso · Vista al río</p>
+            <button class="secondary-btn full">Ver en mapa</button>
+          </article>
+        </div>
+      </section>
+
+      <!-- REWARDS -->
+      <section class="screen" data-screen="rewards" aria-label="Recompensas">
+        <h2 class="screen-title">Recompensas</h2>
+
+        <div class="card points-card">
+          <div>
+            <span class="points-label">Tus puntos</span>
+            <span class="points-value">1,250</span>
+          </div>
+          <button class="primary-btn small">Canjear</button>
+        </div>
+
+        <div class="card">
+          <h3>Ofertas disponibles</h3>
+          <div class="reward-item">
+            <div>
+              <strong>10% en café local</strong>
+              <p>400 pts · Solo fines de semana</p>
+            </div>
+            <button class="ghost-btn tiny">Canjear</button>
+          </div>
+          <div class="reward-item">
+            <div>
+              <strong>1 hora de bici gratis</strong>
+              <p>650 pts · Estaciones WalkTrack</p>
+            </div>
+            <button class="ghost-btn tiny">Canjear</button>
+          </div>
+          <div class="reward-item">
+            <div>
+              <strong>Botella reutilizable</strong>
+              <p>1,200 pts · Stock limitado</p>
+            </div>
+            <button class="ghost-btn tiny">Canjear</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- PROFILE -->
+      <section class="screen" data-screen="profile" aria-label="Perfil">
+        <h2 class="screen-title">Perfil</h2>
+
+        <div class="card profile-card">
+          <div class="avatar-circle">DR</div>
+          <div>
+            <strong>Diana Ramírez</strong>
+            <p>Nivel: Explorador urbano</p>
+          </div>
+        </div>
+
+        <div class="card settings-list">
+          <button class="settings-item">
+            <span>Objetivos de actividad</span>
+            <span>10,000 pasos</span>
+          </button>
+          <button class="settings-item">
+            <span>Notificaciones</span>
+            <span>Activadas</span>
+          </button>
+          <button class="settings-item">
+            <span>Modo oscuro</span>
+            <span>Automático</span>
+          </button>
+          <button class="settings-item">
+            <span>Privacidad y datos</span>
+            <span>Configurar</span>
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <!-- NAV INFERIOR -->
+    <nav class="app-nav" aria-label="Navegación principal">
+      <button class="nav-item nav-active" data-target="home">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">Inicio</span>
+      </button>
+      <button class="nav-item" data-target="activity">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Actividad</span>
+      </button>
+      <button class="nav-item" data-target="routes">
+        <span class="nav-icon">🗺️</span>
+        <span class="nav-label">Rutas</span>
+      </button>
+      <button class="nav-item" data-target="rewards">
+        <span class="nav-icon">🎁</span>
+        <span class="nav-label">Recompensas</span>
+      </button>
+      <button class="nav-item" data-target="profile">
+        <span class="nav-icon">👤</span>
+        <span class="nav-label">Perfil</span>
+      </button>
+    </nav>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
