@@ -66,6 +66,83 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
+.onboarding-screen {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 20% 20%, rgba(116, 0, 184, 0.8), rgba(3, 8, 26, 0.95));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 5;
+  backdrop-filter: blur(8px);
+}
+
+.onboarding-screen[hidden] {
+  display: none;
+}
+
+.onboarding-card {
+  width: 100%;
+  background: rgba(14, 19, 46, 0.95);
+  border-radius: var(--radius-xl);
+  padding: 18px;
+  border: 1px solid rgba(128, 255, 219, 0.4);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.45);
+  display: grid;
+  gap: 6px;
+}
+
+.onboarding-card h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.onboarding-copy {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.86rem;
+}
+
+.onboarding-form {
+  margin-top: 6px;
+  display: grid;
+  gap: 8px;
+}
+
+.onboarding-form label {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.onboarding-form input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-main);
+  font-size: 0.9rem;
+  outline: none;
+  transition: border 0.12s ease, background 0.12s ease;
+}
+
+.onboarding-form input:focus {
+  border-color: var(--c8);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.input-hint {
+  margin: -4px 0 0;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+}
+
+.primary-btn.full {
+  width: 100%;
+  text-align: center;
+}
+
 /* --------- HEADER --------- */
 
 .app-header {
@@ -729,6 +806,42 @@ button:disabled {
   font-size: 0.9rem;
 }
 
+.premium-card {
+  background: linear-gradient(135deg, rgba(116, 0, 184, 0.7), rgba(83, 144, 217, 0.4));
+  border-color: rgba(128, 255, 219, 0.4);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.premium-perks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.perk-pill {
+  border-radius: 12px;
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  font-size: 0.72rem;
+  color: var(--text-main);
+}
+
+.premium-btn {
+  align-self: flex-start;
+  box-shadow: 0 8px 18px rgba(128, 255, 219, 0.35);
+}
+
+.premium-btn.premium-active {
+  background: linear-gradient(120deg, #9efddf, #74e6ff);
+  color: #03324a;
+  box-shadow: 0 10px 22px rgba(116, 255, 226, 0.5);
+}
+
 .settings-list {
   margin-top: 10px;
   padding: 8px 0;
@@ -904,6 +1017,53 @@ body.light-mode .nav-item {
 body.light-mode .nav-active {
   background: rgba(63, 61, 255, 0.12);
   color: #1f6feb;
+}
+
+body.light-mode .onboarding-screen {
+  background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.92), rgba(209, 227, 255, 0.96));
+}
+
+body.light-mode .onboarding-card {
+  background: #ffffff;
+  color: #0f162b;
+  border-color: rgba(31, 111, 235, 0.25);
+}
+
+body.light-mode .onboarding-form label,
+body.light-mode .input-hint,
+body.light-mode .onboarding-copy {
+  color: #52607d;
+}
+
+body.light-mode .onboarding-form input {
+  background: rgba(12, 29, 64, 0.05);
+  border-color: rgba(12, 29, 64, 0.1);
+  color: #0f162b;
+}
+
+body.light-mode .onboarding-form input:focus {
+  border-color: #1f6feb;
+  background: rgba(31, 111, 235, 0.08);
+}
+
+body.light-mode .premium-card {
+  background: linear-gradient(135deg, #fff4d8, #ffe2ad);
+  border-color: rgba(230, 182, 71, 0.5);
+}
+
+body.light-mode .perk-pill {
+  background: rgba(12, 29, 64, 0.08);
+  border-color: rgba(12, 29, 64, 0.12);
+  color: #0f162b;
+}
+
+body.light-mode .premium-btn {
+  box-shadow: 0 8px 18px rgba(230, 182, 71, 0.35);
+}
+
+body.light-mode .premium-btn.premium-active {
+  background: linear-gradient(120deg, #1fd1a5, #54e9c2);
+  color: #03324a;
 }
 
 /* Pequeños ajustes para pantallas muy bajas */

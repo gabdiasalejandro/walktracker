@@ -20,10 +20,23 @@ document.addEventListener("DOMContentLoaded", () => {
   const distanceValue = document.getElementById("distance-value");
   const statsNumber = document.querySelector(".stats-number");
   const pointsValue = document.querySelector(".points-value");
+  const premiumBtn = document.getElementById("premium-btn");
+  const onboardingScreen = document.getElementById("onboarding-screen");
+  const onboardingForm = document.getElementById("onboarding-form");
+  const onboardingInput = document.getElementById("username-input");
+  const onboardingStart = document.getElementById("start-onboarding");
+  const profileName = document.getElementById("profile-name");
+  const avatarInitials = document.getElementById("avatar-initials");
 
   const parseNumber = (text) => Number(String(text || "0").replace(/[^\d]/g, "")) || 0;
   let baseSteps = parseNumber(statsNumber?.textContent);
   let points = parseNumber(pointsValue?.textContent);
+  const storedPoints = localStorage.getItem("wt-points");
+  if (storedPoints && !Number.isNaN(Number(storedPoints))) {
+    points = Number(storedPoints);
+  }
+  let userName = profileName?.textContent || "Tu nombre";
+  let isPremium = false;
 
   const activityState = {
     status: "idle",
@@ -69,8 +82,86 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function updatePointsDisplay() {
-    if (!pointsValue) return;
-    pointsValue.textContent = points.toLocaleString("es-ES");
+    if (pointsValue) {
+      pointsValue.textContent = points.toLocaleString("es-ES");
+    }
+    localStorage.setItem("wt-points", String(points));
+  }
+
+  function sanitizeName(value) {
+    return (value || "").replace(/[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ ]/g, "").replace(/\s{2,}/g, " ");
+  }
+
+  function isValidName(value) {
+    const trimmed = (value || "").trim();
+    if (trimmed.length < 2) return false;
+    return /^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ ]+$/.test(trimmed);
+  }
+
+  function getInitials(name) {
+    const parts = (name || "")
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((part) => part[0])
+      .join("")
+      .slice(0, 2);
+    return parts ? parts.toUpperCase() : "WT";
+  }
+
+  function setProfileName(name) {
+    userName = name;
+    if (profileName) profileName.textContent = name;
+    if (avatarInitials) avatarInitials.textContent = getInitials(name);
+  }
+
+  function toggleOnboarding(show) {
+    if (!onboardingScreen) return;
+    onboardingScreen.hidden = !show;
+    onboardingScreen.setAttribute("aria-hidden", show ? "false" : "true");
+    if (show && onboardingInput) onboardingInput.focus();
+  }
+
+  function handleNameInput() {
+    if (!onboardingInput || !onboardingStart) return "";
+    const cleaned = sanitizeName(onboardingInput.value);
+    if (cleaned !== onboardingInput.value) onboardingInput.value = cleaned;
+    const valid = isValidName(cleaned);
+    onboardingStart.disabled = !valid;
+    return valid ? cleaned.trim() : "";
+  }
+
+  function completeOnboarding() {
+    const name = handleNameInput();
+    if (!name) {
+      pushToast("Nombre inválido", "Usa solo letras y espacios");
+      return;
+    }
+    localStorage.setItem("wt-username", name);
+    setProfileName(name);
+    toggleOnboarding(false);
+    pushToast("Perfil actualizado", `Hola, ${name}`);
+  }
+
+  function updatePremiumUI() {
+    if (!premiumBtn) return;
+    premiumBtn.textContent = isPremium ? "Premium activo" : "Suscribirme";
+    premiumBtn.disabled = isPremium;
+    premiumBtn.classList.toggle("premium-active", isPremium);
+  }
+
+  function activatePremium() {
+    if (isPremium) {
+      pushToast("Premium ya activo", "Disfruta de los beneficios");
+      return;
+    }
+    isPremium = true;
+    localStorage.setItem("wt-premium", "true");
+    points += 150;
+    updatePointsDisplay();
+    refreshRedeemButtons();
+    updatePremiumUI();
+    pushToast("Premium activado", "150 pts de bienvenida agregados");
   }
 
   function updateLiveUI() {
@@ -246,6 +337,24 @@ document.addEventListener("DOMContentLoaded", () => {
     setTheme(mode);
   }
 
+  function initPremium() {
+    const savedPremium = localStorage.getItem("wt-premium");
+    isPremium = savedPremium === "true";
+    updatePremiumUI();
+  }
+
+  function initUser() {
+    const savedName = localStorage.getItem("wt-username");
+    if (savedName && isValidName(savedName)) {
+      setProfileName(savedName.trim());
+      toggleOnboarding(false);
+      return;
+    }
+    setProfileName(userName);
+    toggleOnboarding(true);
+    handleNameInput();
+  }
+
   // Eventos principales
   startBtn?.addEventListener("click", startActivity);
 
@@ -255,6 +364,15 @@ document.addEventListener("DOMContentLoaded", () => {
   joinChallenge?.addEventListener("click", () => {
     pushToast("Te uniste al reto", "Sumaremos tus km de esta semana");
   });
+
+  onboardingInput?.addEventListener("input", handleNameInput);
+
+  onboardingForm?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    completeOnboarding();
+  });
+
+  premiumBtn?.addEventListener("click", activatePremium);
 
   rewardButtons.forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -285,6 +403,8 @@ document.addEventListener("DOMContentLoaded", () => {
   distanceFilter?.addEventListener("input", applyRouteFilters);
 
   initTheme();
+  initPremium();
+  initUser();
   updatePointsDisplay();
   refreshRedeemButtons();
   applyRouteFilters();

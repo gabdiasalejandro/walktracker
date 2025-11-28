@@ -9,6 +9,32 @@
 <body>
   <div class="app-shell">
     <button class="ghost-btn tiny theme-toggle-floating" id="theme-toggle" aria-label="Cambiar tema">Modo claro</button>
+
+    <div class="onboarding-screen" id="onboarding-screen" aria-labelledby="onboarding-title">
+      <div class="onboarding-card">
+        <div class="eyebrow">Bienvenido</div>
+        <h2 id="onboarding-title">Ingresa tu nombre</h2>
+        <p class="onboarding-copy">Personalizaremos tu perfil y tus logros.</p>
+        <form class="onboarding-form" id="onboarding-form">
+          <label for="username-input">Nombre</label>
+          <input
+            type="text"
+            id="username-input"
+            name="username"
+            placeholder="Ej. Ana Torres"
+            autocomplete="off"
+            inputmode="text"
+            spellcheck="false"
+            maxlength="40"
+            pattern="[A-Za-zÁÉÍÓÚÜÑáéíóúüñ ]+"
+            required
+          />
+          <small class="input-hint">Solo letras y espacios.</small>
+          <button type="submit" class="primary-btn full" id="start-onboarding" disabled>Comenzar</button>
+        </form>
+      </div>
+    </div>
+
     <header class="app-header">
       <div class="app-title">
         <span class="app-logo">WT</span>
@@ -294,11 +320,25 @@
         <h2 class="screen-title">Perfil</h2>
 
         <div class="card profile-card">
-          <div class="avatar-circle">DR</div>
+          <div class="avatar-circle" id="avatar-initials">DR</div>
           <div>
-            <strong>Diana Ramírez</strong>
+            <strong id="profile-name">Tu nombre</strong>
             <p>Nivel: Explorador urbano</p>
           </div>
+        </div>
+
+        <div class="card premium-card">
+          <div>
+            <div class="eyebrow">WalkTrack Premium</div>
+            <h3>Activa beneficios ilimitados</h3>
+            <p>Mapas offline, rutas exclusivas y retos con recompensas dobles.</p>
+            <div class="premium-perks">
+              <span class="perk-pill">7 días gratis</span>
+              <span class="perk-pill">Reportes pro</span>
+              <span class="perk-pill">Soporte prioritario</span>
+            </div>
+          </div>
+          <button class="primary-btn premium-btn" id="premium-btn">Suscribirme</button>
         </div>
 
         <div class="card settings-list">
