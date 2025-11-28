@@ -1,37 +1,292 @@
 document.addEventListener("DOMContentLoaded", () => {
   const navItems = document.querySelectorAll(".nav-item");
   const screens = document.querySelectorAll(".screen");
+  const startBtn = document.getElementById("start-btn");
+  const pauseBtn = document.getElementById("pause-btn");
+  const finishBtn = document.getElementById("finish-btn");
+  const themeToggle = document.getElementById("theme-toggle");
+  const liveStatus = document.getElementById("live-status");
+  const liveTimer = document.getElementById("live-timer");
+  const liveSteps = document.getElementById("live-steps");
+  const livePulse = document.getElementById("live-pulse");
+  const activityList = document.querySelector(".activity-list");
+  const joinChallenge = document.getElementById("join-challenge");
+  const rewardButtons = document.querySelectorAll(".redeem-btn");
+  const toastStack = document.getElementById("toast-stack");
+  const filtersWrapper = document.getElementById("route-filters");
+  const routeCards = document.querySelectorAll(".route-card");
+  const routeEmpty = document.getElementById("route-empty");
+  const distanceFilter = document.getElementById("distance-filter");
+  const distanceValue = document.getElementById("distance-value");
+  const statsNumber = document.querySelector(".stats-number");
+  const pointsValue = document.querySelector(".points-value");
+
+  const parseNumber = (text) => Number(String(text || "0").replace(/[^\d]/g, "")) || 0;
+  let baseSteps = parseNumber(statsNumber?.textContent);
+  let points = parseNumber(pointsValue?.textContent);
+
+  const activityState = {
+    status: "idle",
+    baseSeconds: 0,
+    steps: 0,
+    startedAt: null,
+    timerId: null,
+  };
+
+  const activeFilters = new Set(
+    Array.from(filtersWrapper?.querySelectorAll(".chip-active") || []).map(
+      (btn) => btn.dataset.filter
+    )
+  );
 
   function showScreen(target) {
     screens.forEach((screen) => {
-      if (screen.dataset.screen === target) {
-        screen.classList.add("screen-active");
-      } else {
-        screen.classList.remove("screen-active");
-      }
+      screen.classList.toggle("screen-active", screen.dataset.screen === target);
     });
 
     navItems.forEach((item) => {
-      if (item.dataset.target === target) {
-        item.classList.add("nav-active");
-      } else {
-        item.classList.remove("nav-active");
-      }
+      item.classList.toggle("nav-active", item.dataset.target === target);
     });
   }
 
   navItems.forEach((item) => {
     item.addEventListener("click", () => {
-      const target = item.dataset.target;
-      showScreen(target);
+      showScreen(item.dataset.target);
     });
   });
 
-  // Ejemplo: botón "Iniciar actividad" puede llevar a Actividad
-  const headerBtn = document.querySelector(".header-btn");
-  if (headerBtn) {
-    headerBtn.addEventListener("click", () => {
-      showScreen("activity");
+  function formatTime(totalSeconds) {
+    const hrs = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");
+    const mins = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
+    const secs = String(totalSeconds % 60).padStart(2, "0");
+    return `${hrs}:${mins}:${secs}`;
+  }
+
+  function updateStatsCircle() {
+    if (!statsNumber) return;
+    const totalSteps = baseSteps + activityState.steps;
+    statsNumber.textContent = totalSteps.toLocaleString("es-ES");
+  }
+
+  function updatePointsDisplay() {
+    if (!pointsValue) return;
+    pointsValue.textContent = points.toLocaleString("es-ES");
+  }
+
+  function updateLiveUI() {
+    const elapsed = getElapsedSeconds();
+    if (liveTimer) liveTimer.textContent = formatTime(elapsed);
+    if (liveSteps) liveSteps.textContent = `${activityState.steps} pasos`;
+    updateStatsCircle();
+
+    if (livePulse && liveStatus) {
+      livePulse.classList.remove("paused", "idle");
+      if (activityState.status === "running") {
+        liveStatus.textContent = "En marcha";
+      } else if (activityState.status === "paused") {
+        liveStatus.textContent = "Pausada";
+        livePulse.classList.add("paused");
+      } else {
+        liveStatus.textContent = "En espera";
+        livePulse.classList.add("idle");
+      }
+    }
+
+    if (startBtn) {
+      startBtn.disabled = activityState.status === "running";
+      startBtn.textContent = activityState.status === "paused" ? "Reanudar" : "Iniciar";
+    }
+    if (pauseBtn) pauseBtn.disabled = activityState.status !== "running";
+    if (finishBtn) finishBtn.disabled = activityState.status === "idle";
+  }
+
+  function getElapsedSeconds() {
+    if (activityState.status !== "running" || !activityState.startedAt) {
+      return activityState.baseSeconds;
+    }
+    const diff = Math.floor((Date.now() - activityState.startedAt) / 1000);
+    return activityState.baseSeconds + diff;
+  }
+
+  function tickActivity() {
+    activityState.steps += Math.floor(Math.random() * 7) + 3;
+    updateLiveUI();
+  }
+
+  function startActivity() {
+    if (activityState.status === "running") return;
+    if (activityState.status === "idle") {
+      activityState.baseSeconds = 0;
+      activityState.steps = 0;
+    }
+    activityState.status = "running";
+    activityState.startedAt = Date.now();
+    clearInterval(activityState.timerId);
+    activityState.timerId = setInterval(tickActivity, 1000);
+    updateLiveUI();
+    showScreen("activity");
+  }
+
+  function pauseActivity() {
+    if (activityState.status !== "running") return;
+    activityState.baseSeconds = getElapsedSeconds();
+    activityState.status = "paused";
+    clearInterval(activityState.timerId);
+    updateLiveUI();
+  }
+
+  function finishActivity() {
+    if (activityState.status === "idle") return;
+    const elapsed = getElapsedSeconds();
+    clearInterval(activityState.timerId);
+    const minutes = Math.max(1, Math.round(elapsed / 60));
+    const distance = Math.max(0.2, Number((activityState.steps / 1300).toFixed(1)));
+    baseSteps += activityState.steps;
+    addActivityItem({
+      title: "Sesión rápida",
+      summary: `${distance} km · ${minutes} min`,
+      tag: "Caminar",
+    });
+    pushToast("Sesión guardada", `${distance} km registrados`);
+    activityState.status = "idle";
+    activityState.baseSeconds = 0;
+    activityState.steps = 0;
+    activityState.startedAt = null;
+    updateLiveUI();
+  }
+
+  function addActivityItem({ title, summary, tag }) {
+    if (!activityList) return;
+    const item = document.createElement("div");
+    item.className = "activity-item";
+    item.innerHTML = `
+      <div>
+        <strong>${title}</strong>
+        <p>${summary}</p>
+      </div>
+      <span class="tag tag-walk">${tag}</span>
+    `;
+    const firstItem = activityList.querySelector(".activity-item");
+    activityList.insertBefore(item, firstItem);
+  }
+
+  function pushToast(title, detail) {
+    if (!toastStack) return;
+    const toast = document.createElement("div");
+    toast.className = "toast";
+    toast.innerHTML = `
+      <div>
+        <strong>${title}</strong>
+        ${detail ? `<br/><small>${detail}</small>` : ""}
+      </div>
+      <button aria-label="Cerrar notificación">✕</button>
+    `;
+    toastStack.appendChild(toast);
+    const remove = () => {
+      toast.classList.add("fade-out");
+      setTimeout(() => toast.remove(), 180);
+    };
+    toast.querySelector("button")?.addEventListener("click", remove);
+    setTimeout(remove, 3200);
+  }
+
+  function applyRouteFilters() {
+    if (!routeCards.length) return;
+    const maxDistance = Number(distanceFilter?.value || 15);
+    if (distanceValue) distanceValue.textContent = `${maxDistance} km`;
+    const typeFilters = ["walk", "bike"].filter((t) => activeFilters.has(t));
+    const safeOnly = activeFilters.has("safe");
+
+    let visibleCount = 0;
+    routeCards.forEach((card) => {
+      const type = card.dataset.type;
+      const distance = Number(card.dataset.distance);
+      const isSafe = card.dataset.safe === "true";
+      const matchesType = typeFilters.length ? typeFilters.includes(type) : true;
+      const matchesSafe = !safeOnly || isSafe;
+      const matchesDistance = distance <= maxDistance;
+      const show = matchesType && matchesSafe && matchesDistance;
+      card.hidden = !show;
+      if (show) visibleCount += 1;
+    });
+
+    if (routeEmpty) routeEmpty.hidden = visibleCount > 0;
+  }
+
+  function refreshRedeemButtons() {
+    rewardButtons.forEach((btn) => {
+      const cost = Number(btn.dataset.cost || 0);
+      btn.disabled = cost > points;
     });
   }
+
+  function redeem(cost) {
+    if (cost > points) {
+      const missing = cost - points;
+      pushToast("Puntos insuficientes", `Te faltan ${missing} pts`);
+      return;
+    }
+    points -= cost;
+    updatePointsDisplay();
+    refreshRedeemButtons();
+    pushToast("Canje realizado", `Saldo: ${points.toLocaleString("es-ES")} pts`);
+  }
+
+  function setTheme(mode) {
+    const isLight = mode === "light";
+    document.body.classList.toggle("light-mode", isLight);
+    if (themeToggle) themeToggle.textContent = isLight ? "Modo oscuro" : "Modo claro";
+    localStorage.setItem("wt-theme", isLight ? "light" : "dark");
+  }
+
+  function initTheme() {
+    const saved = localStorage.getItem("wt-theme");
+    const prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
+    const mode = saved || (prefersLight ? "light" : "dark");
+    setTheme(mode);
+  }
+
+  // Eventos principales
+  startBtn?.addEventListener("click", startActivity);
+
+  pauseBtn?.addEventListener("click", pauseActivity);
+  finishBtn?.addEventListener("click", finishActivity);
+
+  joinChallenge?.addEventListener("click", () => {
+    pushToast("Te uniste al reto", "Sumaremos tus km de esta semana");
+  });
+
+  rewardButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const cost = Number(btn.dataset.cost || 0);
+      redeem(cost);
+    });
+  });
+
+  themeToggle?.addEventListener("click", () => {
+    const next = document.body.classList.contains("light-mode") ? "dark" : "light";
+    setTheme(next);
+  });
+
+  filtersWrapper?.addEventListener("click", (e) => {
+    const target = e.target;
+    if (!(target instanceof HTMLButtonElement)) return;
+    const key = target.dataset.filter;
+    if (!key) return;
+    target.classList.toggle("chip-active");
+    if (target.classList.contains("chip-active")) {
+      activeFilters.add(key);
+    } else {
+      activeFilters.delete(key);
+    }
+    applyRouteFilters();
+  });
+
+  distanceFilter?.addEventListener("input", applyRouteFilters);
+
+  initTheme();
+  updatePointsDisplay();
+  refreshRedeemButtons();
+  applyRouteFilters();
+  updateLiveUI();
 });

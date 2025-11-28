@@ -1,2 +1,4 @@
-".DS_Store" >> .gitignore
-"node_modules/" >> .gitignore   # si llegas a usar NPM
+.DS_Store
+Thumbs.db
+.vscode/
+

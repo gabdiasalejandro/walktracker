@@ -8,6 +8,7 @@
 </head>
 <body>
   <div class="app-shell">
+    <button class="ghost-btn tiny theme-toggle-floating" id="theme-toggle" aria-label="Cambiar tema">Modo claro</button>
     <header class="app-header">
       <div class="app-title">
         <span class="app-logo">WT</span>
@@ -16,7 +17,6 @@
           <p>Camina, pedalea, gana recompensas</p>
         </div>
       </div>
-      <button class="primary-btn header-btn">Iniciar actividad</button>
     </header>
 
     <main class="app-main">
@@ -45,6 +45,22 @@
           </div>
         </div>
 
+        <div class="card activity-live">
+          <div class="eyebrow">Estado de actividad</div>
+          <div class="live-row">
+            <div>
+              <p class="live-status" id="live-status">En espera</p>
+              <p class="live-meta"><span id="live-timer">00:00:00</span> · <span id="live-steps">0 pasos</span></p>
+            </div>
+            <span class="tag tag-pulse" id="live-pulse">•</span>
+          </div>
+          <div class="live-actions">
+            <button class="primary-btn small" id="start-btn">Iniciar</button>
+            <button class="secondary-btn small" id="pause-btn" disabled>Pausar</button>
+            <button class="ghost-btn small" id="finish-btn" disabled>Terminar</button>
+          </div>
+        </div>
+
         <div class="card horizontal-card">
           <div>
             <h3>Meta diaria</h3>
@@ -63,6 +79,55 @@
             <button class="chip-btn">Bicicleta</button>
             <button class="chip-btn">Ruta rápida</button>
             <button class="chip-btn">Ver logros</button>
+          </div>
+        </div>
+
+        <div class="card weekly-card">
+          <div class="eyebrow">Reto semanal</div>
+          <div class="weekly-header">
+            <div>
+              <h3>3/5 días completados</h3>
+              <p>Objetivo: 35 km · Te faltan 12 km</p>
+            </div>
+            <button class="ghost-btn tiny" id="join-challenge">Unirme</button>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 60%;"></div>
+          </div>
+          <div class="week-dots" aria-label="Progreso semanal">
+            <span class="dot done">L</span>
+            <span class="dot done">M</span>
+            <span class="dot done">Mi</span>
+            <span class="dot pending">J</span>
+            <span class="dot pending">V</span>
+            <span class="dot muted">S</span>
+            <span class="dot muted">D</span>
+          </div>
+        </div>
+
+        <div class="card achievements-card">
+          <div class="eyebrow">Logros y rachas</div>
+          <div class="achievements-grid">
+            <button class="badge unlocked">
+              <span>🔥</span>
+              <strong>Racha x5</strong>
+              <small>5 días seguidos</small>
+            </button>
+            <button class="badge unlocked">
+              <span>🏅</span>
+              <strong>Primer 10k</strong>
+              <small>10k pasos en un día</small>
+            </button>
+            <button class="badge locked" aria-disabled="true">
+              <span>🔒</span>
+              <strong>Explorador</strong>
+              <small>10 rutas nuevas</small>
+            </button>
+            <button class="badge locked" aria-disabled="true">
+              <span>🔒</span>
+              <strong>Maratón</strong>
+              <small>42 km acumulados</small>
+            </button>
           </div>
         </div>
       </section>
@@ -135,18 +200,25 @@
       <section class="screen" data-screen="routes" aria-label="Rutas">
         <h2 class="screen-title">Rutas</h2>
 
-        <div class="card">
+        <div class="card filters-card">
           <h3>Filtros</h3>
-          <div class="quick-grid">
-            <button class="chip-btn chip-active">Cerca de mí</button>
-            <button class="chip-btn">Caminar</button>
-            <button class="chip-btn">Bicicleta</button>
-            <button class="chip-btn">Seguras</button>
+          <div class="quick-grid" id="route-filters">
+            <button class="chip-btn chip-active" data-filter="nearby">Cerca de mí</button>
+            <button class="chip-btn" data-filter="walk">Caminar</button>
+            <button class="chip-btn" data-filter="bike">Bicicleta</button>
+            <button class="chip-btn" data-filter="safe">Seguras</button>
+          </div>
+          <div class="filter-extra">
+            <label>
+              <span>Distancia máx.</span>
+              <input type="range" id="distance-filter" min="2" max="15" value="10" />
+              <span id="distance-value">10 km</span>
+            </label>
           </div>
         </div>
 
-        <div class="route-list">
-          <article class="card route-card">
+        <div class="route-list" id="route-list">
+          <article class="card route-card" data-type="walk" data-distance="3.5" data-safe="true">
             <div class="route-header">
               <h3>Ruta parque central</h3>
               <span class="tag tag-safe">4.7 ★</span>
@@ -156,7 +228,7 @@
             <button class="secondary-btn full">Ver en mapa</button>
           </article>
 
-          <article class="card route-card">
+          <article class="card route-card" data-type="bike" data-distance="7.8" data-safe="true">
             <div class="route-header">
               <h3>Circuito río en bici</h3>
               <span class="tag tag-bike">Bici</span>
@@ -165,7 +237,18 @@
             <p class="route-meta">Puntos de descanso · Vista al río</p>
             <button class="secondary-btn full">Ver en mapa</button>
           </article>
+
+          <article class="card route-card" data-type="walk" data-distance="12" data-safe="false">
+            <div class="route-header">
+              <h3>Sendero urbano largo</h3>
+              <span class="tag tag-walk">Caminar</span>
+            </div>
+            <p>12 km · Ideal para prueba de resistencia.</p>
+            <p class="route-meta">Tramos sin sombra · Cruces peatonales</p>
+            <button class="secondary-btn full">Ver en mapa</button>
+          </article>
         </div>
+        <p class="empty-copy" id="route-empty" hidden>No hay rutas con estos filtros.</p>
       </section>
 
       <!-- REWARDS -->
@@ -187,21 +270,21 @@
               <strong>10% en café local</strong>
               <p>400 pts · Solo fines de semana</p>
             </div>
-            <button class="ghost-btn tiny">Canjear</button>
+            <button class="ghost-btn tiny redeem-btn" data-cost="400">Canjear</button>
           </div>
           <div class="reward-item">
             <div>
               <strong>1 hora de bici gratis</strong>
               <p>650 pts · Estaciones WalkTrack</p>
             </div>
-            <button class="ghost-btn tiny">Canjear</button>
+            <button class="ghost-btn tiny redeem-btn" data-cost="650">Canjear</button>
           </div>
           <div class="reward-item">
             <div>
               <strong>Botella reutilizable</strong>
               <p>1,200 pts · Stock limitado</p>
             </div>
-            <button class="ghost-btn tiny">Canjear</button>
+            <button class="ghost-btn tiny redeem-btn" data-cost="1200">Canjear</button>
           </div>
         </div>
       </section>
@@ -263,6 +346,8 @@
       </button>
     </nav>
   </div>
+
+  <div id="toast-stack" aria-live="polite" aria-atomic="true"></div>
 
   <script src="app.js"></script>
 </body>
