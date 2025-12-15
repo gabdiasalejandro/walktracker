@@ -992,7 +992,6 @@ button:disabled {
   font-size: 1.3rem;
   font-weight: 700;
   background: linear-gradient(120deg, var(--c9), var(--c7));
-  -webkit-background-clip: text;
   color: transparent;
 }
 
