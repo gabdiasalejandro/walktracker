@@ -19,6 +19,22 @@ document.addEventListener("DOMContentLoaded", () => {
   const distanceFilter = document.getElementById("distance-filter");
   const distanceValue = document.getElementById("distance-value");
   const statsNumber = document.querySelector(".stats-number");
+  const statsCircle = document.querySelector(".stats-circle");
+  const goalProgressFill = document.getElementById("goal-progress-fill");
+  const goalLabel = document.getElementById("goal-label");
+  const goalPill = document.getElementById("goal-pill");
+  const goalPercent = document.getElementById("goal-percent");
+  const dailyMessage = document.getElementById("daily-message");
+  const co2Value = document.getElementById("co2-value");
+  const ecoCo2 = document.getElementById("eco-co2");
+  const ecoKm = document.getElementById("eco-km");
+  const ecoTrees = document.getElementById("eco-trees");
+  const ecoMessage = document.getElementById("eco-message");
+  const distanceValueHome = document.getElementById("distance-value-home");
+  const activeMinutes = document.getElementById("active-minutes");
+  const caloriesValue = document.getElementById("calories-value");
+  const goalShort = document.getElementById("goal-short");
+  const impactCo2Top = document.getElementById("impact-co2-top");
   const pointsValue = document.querySelector(".points-value");
   const premiumBtn = document.getElementById("premium-btn");
   const onboardingScreen = document.getElementById("onboarding-screen");
@@ -29,8 +45,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const avatarInitials = document.getElementById("avatar-initials");
 
   const parseNumber = (text) => Number(String(text || "0").replace(/[^\d]/g, "")) || 0;
+  const DAILY_GOAL = Number(statsCircle?.dataset.goal) || 10000;
+  const STEPS_PER_KM = 1300;
+  const CO2_PER_KM = 0.21;
+  const KG_PER_TREE = 21;
   let baseSteps = parseNumber(statsNumber?.textContent);
   let points = parseNumber(pointsValue?.textContent);
+  let activeMinutesBase = parseNumber(activeMinutes?.textContent);
   const storedPoints = localStorage.getItem("wt-points");
   if (storedPoints && !Number.isNaN(Number(storedPoints))) {
     points = Number(storedPoints);
@@ -75,10 +96,74 @@ document.addEventListener("DOMContentLoaded", () => {
     return `${hrs}:${mins}:${secs}`;
   }
 
+  function updateMessages(progress, remainingSteps) {
+    if (dailyMessage) {
+      let message = "Buen arranque, suma una caminata corta.";
+      if (progress >= 100) {
+        message = "Meta lista. Explora una ruta recomendada o canjea puntos.";
+      } else if (progress >= 70) {
+        message = "¡Vas muy bien! Superaste el 70% de tu meta.";
+      } else if (progress >= 40) {
+        message = "Ritmo constante. Intenta 10 min más para el bonus.";
+      }
+      dailyMessage.textContent = message;
+    }
+
+    if (ecoMessage) {
+      if (progress >= 100) {
+        ecoMessage.textContent = "Impacto verde logrado hoy. Bonus eco activado.";
+      } else {
+        const minutesLeft = Math.max(5, Math.round(remainingSteps / 120));
+        ecoMessage.textContent = `Sigue ${minutesLeft} min más para llegar a tu objetivo verde de hoy.`;
+      }
+    }
+  }
+
+  function updateProgressIndicators(totalSteps) {
+    const progress = Math.min(100, Math.round((totalSteps / DAILY_GOAL) * 100));
+    const remainingSteps = Math.max(0, DAILY_GOAL - totalSteps);
+
+    if (statsCircle) {
+      statsCircle.style.setProperty("--progress", progress);
+    }
+    if (goalProgressFill) {
+      const width = `${progress}%`;
+      goalProgressFill.style.setProperty("--progress-width", width);
+    }
+    if (goalLabel) {
+      goalLabel.textContent =
+        remainingSteps > 0
+          ? `Te faltan ${remainingSteps.toLocaleString("es-ES")} pasos`
+          : "Meta cumplida hoy";
+    }
+    if (goalPill) goalPill.textContent = progress >= 100 ? "Meta lista" : `${progress}%`;
+    if (goalPercent) goalPercent.textContent = `${progress}%`;
+    if (goalShort) goalShort.textContent = `${DAILY_GOAL.toLocaleString("es-ES")} pasos`;
+
+    const distanceKm = Number((totalSteps / STEPS_PER_KM).toFixed(1));
+    if (distanceValueHome) distanceValueHome.textContent = `${distanceKm} km`;
+    if (ecoKm) ecoKm.textContent = `${distanceKm} km`;
+
+    const co2Saved = Math.max(0, Number((distanceKm * CO2_PER_KM).toFixed(2)));
+    const co2Label = `${co2Saved} kg`;
+    if (co2Value) co2Value.textContent = co2Label;
+    if (ecoCo2) ecoCo2.textContent = co2Label;
+    if (impactCo2Top) impactCo2Top.textContent = `CO₂ evitado · ${co2Label}`;
+
+    const trees = Math.max(0, Number((co2Saved / KG_PER_TREE).toFixed(2)));
+    if (ecoTrees) ecoTrees.textContent = trees.toFixed(2);
+
+    const calories = Math.max(200, Math.round(distanceKm * 70));
+    if (caloriesValue) caloriesValue.textContent = `${calories} kcal`;
+
+    updateMessages(progress, remainingSteps);
+  }
+
   function updateStatsCircle() {
     if (!statsNumber) return;
     const totalSteps = baseSteps + activityState.steps;
     statsNumber.textContent = totalSteps.toLocaleString("es-ES");
+    updateProgressIndicators(totalSteps);
   }
 
   function updatePointsDisplay() {
@@ -168,6 +253,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const elapsed = getElapsedSeconds();
     if (liveTimer) liveTimer.textContent = formatTime(elapsed);
     if (liveSteps) liveSteps.textContent = `${activityState.steps} pasos`;
+    const totalActive = activeMinutesBase + Math.floor(elapsed / 60);
+    if (activeMinutes) activeMinutes.textContent = `${totalActive} min`;
     updateStatsCircle();
 
     if (livePulse && liveStatus) {
@@ -231,8 +318,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const elapsed = getElapsedSeconds();
     clearInterval(activityState.timerId);
     const minutes = Math.max(1, Math.round(elapsed / 60));
-    const distance = Math.max(0.2, Number((activityState.steps / 1300).toFixed(1)));
+    const distance = Math.max(0.2, Number((activityState.steps / STEPS_PER_KM).toFixed(1)));
     baseSteps += activityState.steps;
+    activeMinutesBase += minutes;
     addActivityItem({
       title: "Sesión rápida",
       summary: `${distance} km · ${minutes} min`,

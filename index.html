@@ -39,9 +39,14 @@
       <div class="app-title">
         <span class="app-logo">WT</span>
         <div>
-          <h1>WalkTrack</h1>
-          <p>Camina, pedalea, gana recompensas</p>
+          <p class="eyebrow">WalkTrack</p>
+          <h1>Muévete con impacto</h1>
+          <p>Pasos, bici y recompensas verdes</p>
         </div>
+      </div>
+      <div class="header-chips" aria-label="Resumen rápido">
+        <span class="pill success" id="impact-co2-top">CO₂ evitado · 1.0 kg</span>
+        <span class="pill info">Nivel · Explorador urbano</span>
       </div>
     </header>
 
@@ -51,23 +56,43 @@
         <h2 class="screen-title">Hoy</h2>
 
         <div class="card stats-main">
-          <div class="stats-circle">
-            <span class="stats-number">6,245</span>
-            <span class="stats-label">pasos</span>
+          <div class="stats-hero">
+            <div class="stats-circle" aria-label="Progreso diario" data-goal="10000">
+              <div class="ring-inner">
+                <span class="eyebrow">Hoy</span>
+                <span class="stats-number">6,245</span>
+                <span class="stats-label"><strong id="goal-percent">62%</strong> de 10,000</span>
+              </div>
+            </div>
+            <div class="impact-pill-group">
+              <span class="pill success">CO₂ ↓ <strong id="co2-value">1.0 kg</strong></span>
+              <span class="pill info">Activo <strong id="active-minutes">45 min</strong></span>
+              <span class="pill neutral">Distancia <strong id="distance-value-home">4.8 km</strong></span>
+            </div>
           </div>
           <div class="stats-extra">
-            <div>
-              <span class="extra-label">Distancia</span>
-              <span class="extra-value">4.8 km</span>
+            <div class="motivation-row">
+              <span class="extra-label">Mensaje</span>
+              <span class="extra-value highlight" id="daily-message">¡Vas muy bien! Ya superaste el 60% de tu meta</span>
             </div>
+          </div>
+        </div>
+
+        <div class="card progress-card">
+          <div class="progress-head">
             <div>
-              <span class="extra-label">Calorías</span>
-              <span class="extra-value">320 kcal</span>
+              <h3>Progreso diario</h3>
+              <p id="goal-label">Te faltan 3,755 pasos</p>
             </div>
-            <div>
-              <span class="extra-label">Tiempo activo</span>
-              <span class="extra-value">45 min</span>
-            </div>
+            <span class="pill tiny" id="goal-pill">62%</span>
+          </div>
+          <div class="progress-bar vibrant">
+            <div class="progress-fill" id="goal-progress-fill" style="--progress-width: 62%;"></div>
+          </div>
+          <div class="progress-meta">
+            <span class="chip-mini walk">Caminata</span>
+            <span class="chip-mini bike">Bicicleta</span>
+            <span class="chip-mini eco">Impacto verde</span>
           </div>
         </div>
 
@@ -87,25 +112,40 @@
           </div>
         </div>
 
-        <div class="card horizontal-card">
-          <div>
-            <h3>Meta diaria</h3>
-            <p>10,000 pasos · Te faltan 3,755</p>
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: 62%;"></div>
-            </div>
-          </div>
-          <button class="ghost-btn small">Editar</button>
-        </div>
-
         <div class="card quick-actions">
           <h3>Acciones rápidas</h3>
           <div class="quick-grid">
-            <button class="chip-btn">Caminar</button>
-            <button class="chip-btn">Bicicleta</button>
-            <button class="chip-btn">Ruta rápida</button>
-            <button class="chip-btn">Ver logros</button>
+            <button class="chip-btn chip-walk">🚶 Caminar</button>
+            <button class="chip-btn chip-bike">🚲 Bicicleta</button>
+            <button class="chip-btn">🧭 Ruta segura</button>
+            <button class="chip-btn">🎖️ Ver logros</button>
           </div>
+        </div>
+
+        <div class="card eco-card">
+          <div class="eco-header">
+            <div>
+              <div class="eyebrow">Impacto ambiental</div>
+              <h3>Huella reducida</h3>
+              <p>Comparado con el uso de auto.</p>
+            </div>
+            <div class="eco-icon">🌿</div>
+          </div>
+          <div class="eco-stats">
+            <div>
+              <p class="eco-label">CO₂ evitado</p>
+              <p class="eco-value" id="eco-co2">1.0 kg</p>
+            </div>
+            <div>
+              <p class="eco-label">Km verdes</p>
+              <p class="eco-value" id="eco-km">4.8 km</p>
+            </div>
+            <div>
+              <p class="eco-label">Árboles eq.</p>
+              <p class="eco-value" id="eco-trees">0.05</p>
+            </div>
+          </div>
+          <p class="eco-message" id="eco-message">Sigue 12 min más para llegar a tu objetivo verde de hoy.</p>
         </div>
 
         <div class="card weekly-card">
@@ -118,7 +158,7 @@
             <button class="ghost-btn tiny" id="join-challenge">Unirme</button>
           </div>
           <div class="progress-bar">
-            <div class="progress-fill" style="width: 60%;"></div>
+            <div class="progress-fill" style="--progress-width: 60%;"></div>
           </div>
           <div class="week-dots" aria-label="Progreso semanal">
             <span class="dot done">L</span>
@@ -144,15 +184,15 @@
               <strong>Primer 10k</strong>
               <small>10k pasos en un día</small>
             </button>
-            <button class="badge locked" aria-disabled="true">
-              <span>🔒</span>
-              <strong>Explorador</strong>
-              <small>10 rutas nuevas</small>
+            <button class="badge unlocked">
+              <span>🌿</span>
+              <strong>Huella verde</strong>
+              <small>1 kg de CO₂ evitado</small>
             </button>
             <button class="badge locked" aria-disabled="true">
               <span>🔒</span>
-              <strong>Maratón</strong>
-              <small>42 km acumulados</small>
+              <strong>Cicloviajero</strong>
+              <small>50 km en bicicleta</small>
             </button>
           </div>
         </div>
@@ -249,6 +289,10 @@
               <h3>Ruta parque central</h3>
               <span class="tag tag-safe">4.7 ★</span>
             </div>
+            <div class="route-badges">
+              <span class="pill success">Ideal para hoy</span>
+              <span class="pill soft">Sombra</span>
+            </div>
             <p>3.5 km · Ideal para caminata suave.</p>
             <p class="route-meta">Zona arbolada · Iluminada · Pet friendly</p>
             <button class="secondary-btn full">Ver en mapa</button>
@@ -259,6 +303,10 @@
               <h3>Circuito río en bici</h3>
               <span class="tag tag-bike">Bici</span>
             </div>
+            <div class="route-badges">
+              <span class="pill info">Más popular</span>
+              <span class="pill soft">Ciclovía</span>
+            </div>
             <p>7.8 km · Trayecto plano con ciclovía.</p>
             <p class="route-meta">Puntos de descanso · Vista al río</p>
             <button class="secondary-btn full">Ver en mapa</button>
@@ -268,6 +316,10 @@
             <div class="route-header">
               <h3>Sendero urbano largo</h3>
               <span class="tag tag-walk">Caminar</span>
+            </div>
+            <div class="route-badges">
+              <span class="pill neutral">Reto largo</span>
+              <span class="pill soft">Cruces peatonales</span>
             </div>
             <p>12 km · Ideal para prueba de resistencia.</p>
             <p class="route-meta">Tramos sin sombra · Cruces peatonales</p>
@@ -287,6 +339,24 @@
             <span class="points-value">1,250</span>
           </div>
           <button class="primary-btn small">Canjear</button>
+        </div>
+
+        <div class="card reward-progress">
+          <div class="progress-head">
+            <div>
+              <h3>Camino al próximo premio</h3>
+              <p>Canjea una eco-recompensa a los 1,500 pts.</p>
+            </div>
+            <span class="pill tiny">83%</span>
+          </div>
+          <div class="progress-bar vibrant">
+            <div class="progress-fill" style="--progress-width: 83%;"></div>
+          </div>
+          <div class="progress-meta">
+            <span class="chip-mini walk">+150 por caminar</span>
+            <span class="chip-mini bike">+250 por bici</span>
+            <span class="chip-mini eco">Bonus verde</span>
+          </div>
         </div>
 
         <div class="card">
@@ -324,6 +394,25 @@
           <div>
             <strong id="profile-name">Tu nombre</strong>
             <p>Nivel: Explorador urbano</p>
+          </div>
+        </div>
+
+        <div class="card level-card">
+          <div class="level-top">
+            <div>
+              <div class="eyebrow">Progreso de nivel</div>
+              <h3>Explorador urbano</h3>
+              <p>Completa 2 rutas seguras más para subir de nivel.</p>
+            </div>
+            <div class="medal">🥇</div>
+          </div>
+          <div class="progress-bar vibrant">
+            <div class="progress-fill" id="level-progress" style="--progress-width: 68%;"></div>
+          </div>
+          <div class="progress-meta">
+            <span class="chip-mini walk">Rutas</span>
+            <span class="chip-mini bike">Bici</span>
+            <span class="chip-mini eco">Impacto</span>
           </div>
         </div>
 
